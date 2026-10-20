@@ -1,1 +1,136 @@
 
+/* Basic settings for the whole page */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f5fa;
+    color: #263445;
+}
+
+/* Main white box in the center */
+.container {
+    width: 90%;
+    max-width: 520px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Website heading */
+h1 {
+    text-align: center;
+    color: #176b87;
+    margin-bottom: 12px;
+}
+
+/* Description below heading */
+p {
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Labels above input boxes */
+label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+/* Input boxes */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd6df;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Highlight an input when selected */
+input:focus {
+    outline: 2px solid #56a6bd;
+    border-color: #176b87;
+}
+
+/* Predict button */
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #176b87;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+button:hover {
+    background: #10546b;
+}
+
+/* Small disclaimer at the bottom */
+.note {
+    margin-top: 22px;
+    font-size: 12px;
+    color: #657587;
+}
+
+/* Make the prediction result easy to notice */
+.result {
+    margin: 25px 0;
+    padding: 22px;
+    background-color: #e8f4ff;
+    border: 2px solid #1976d2;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.result h2 {
+    color: #164e80;
+    font-size: 25px;
+    margin-top: 0;
+}
+
+.result-message {
+    font-size: 21px;
+    font-weight: bold;
+    color: #164e80;
+    line-height: 1.5;
+}
+
+.result-note {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 0;
+}
+
+
+.info-box {
+    background: #fff8e6;
+    border-left: 5px solid #e0a020;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.info-box h3 {
+    margin-top: 0;
+    color: #76520a;
+}
+
+small {
+    display: block;
+    color: #555;
+    line-height: 1.5;
+    margin: 6px 0 16px;
+}
+
