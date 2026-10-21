@@ -1,108 +1,163 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetes Prediction</title>
-   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Diabetes Prediction</h1>
-        <p>Enter your health information below.</p>
-         
-{% if prediction %}
-    <div class="result">
-        <h2>🔎 Your Prediction Result</h2>
-        <p class="result-message">{{ prediction }}</p>
-        <p class="result-note">
-            This is an estimate from the ML model, not a medical diagnosis.
-        </p>
-    </div>
-{% endif %}
+    <main class="page">
+        <section class="container">
+            <h1>Diabetes Prediction</h1>
+            <p class="intro">Enter the available health information below.</p>
 
-<div class="info-box">
-    <h3>Before You Begin</h3>
-    <p>
-        Keep your available medical reports ready.
-        Some measurements, such as glucose and insulin,
-        may require laboratory tests. Skin thickness and
-        Diabetes Pedigree Function may not be available
-        in routine reports.
-    </p>
-    <p>
-        This educational model was trained on female
-        participants and is not validated for male users.
-        It cannot diagnose diabetes.
-    </p>
-</div>
+            {% if prediction %}
+            <div class="result">
+                <h2>Your Prediction Result</h2>
+                <p class="result-message">{{ prediction }}</p>
+                <p class="result-note">
+                    This is an educational machine-learning estimate, not a medical diagnosis.
+                </p>
+                {% if selected_model %}
+                <p class="selected-model">Model used: <strong>{{ selected_model }}</strong></p>
+                {% endif %}
+            </div>
+            {% endif %}
 
+            {% if startup_error %}
+            <div class="error-box">
+                <strong>Project setup issue:</strong> {{ startup_error }}
+                <p>Check that the CSV file is in the same folder as app.py and that its columns match the expected names.</p>
+            </div>
+            {% endif %}
 
-        <form action="/predict" method="POST">
-   
-<label for="Gender">Select Gender</label>
-<select id="Gender" name="Gender" required onchange="togglePregnancies()">
-    <option value="">-- Select Gender --</option>
-    <option value="Female">Female</option>
-    <option value="Male">Male</option>
-</select>
-         
+            <div class="info-box">
+                <h3>Before You Begin</h3>
+                <p>
+                    Some measurements, such as glucose and insulin, may require laboratory tests.
+                    Skin thickness and Diabetes Pedigree Function may not be available in routine reports.
+                </p>
+                <p>
+                    The commonly used dataset for this project was collected from female participants.
+                    This model has not been clinically validated and should not be used to diagnose anyone.
+                </p>
+            </div>
 
-<label for="Pregnancies">Number of Pregnancies</label>
-<input
-    type="number"
-    id="Pregnancies"
-    name="Pregnancies"
-    min="0"
-    step="1"
-    value="0"
-    required
->
+            <form action="{{ url_for('predict') }}" method="POST">
+                <label for="Gender">Select Gender</label>
+                <select id="Gender" name="Gender" required onchange="togglePregnancies()">
+                    <option value="">-- Select Gender --</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                </select>
+                <small>Gender is collected for the form only; it is not used as a model input.</small>
 
+                <label for="Pregnancies">Number of Pregnancies</label>
+                <input type="number" id="Pregnancies" name="Pregnancies"
+                       min="0" step="1" value="0" required>
 
-            <label>Glucose Level:</label>
-            <input type="number" name="Glucose" min="0" step="any" required>
+                <label for="Glucose">Glucose Level</label>
+                <input type="number" id="Glucose" name="Glucose" min="0" step="any" required>
 
-            <label>Blood Pressure:</label>
-            <input type="number" name="BloodPressure" min="0" step="any" required>
+                <label for="BloodPressure">Blood Pressure</label>
+                <input type="number" id="BloodPressure" name="BloodPressure" min="0" step="any" required>
 
-            <label>Skin Thickness:</label>
-            <input type="number" name="SkinThickness" min="0" step="any" required>
+                <label for="SkinThickness">Skin Thickness</label>
+                <input type="number" id="SkinThickness" name="SkinThickness" min="0" step="any" required>
 
-            <label>Insulin:</label>
-            <input type="number" name="Insulin" min="0" step="any" required>
+                <label for="Insulin">Insulin</label>
+                <input type="number" id="Insulin" name="Insulin" min="0" step="any" required>
 
-            <label>BMI:</label>
-            <input type="number" name="BMI" min="0" step="any" required>
+                <label for="BMI">BMI</label>
+                <input type="number" id="BMI" name="BMI" min="0" step="any" required>
 
-            <label>Diabetes Pedigree Function:</label>
-            <input type="number" name="DiabetesPedigreeFunction" min="0" step="any" required>
+                <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
+                <input type="number" id="DiabetesPedigreeFunction"
+                       name="DiabetesPedigreeFunction" min="0" step="any" required>
 
-            <label>Age:</label>
-            <input type="number" name="Age" min="1" step="1" required>
+                <label for="Age">Age</label>
+                <input type="number" id="Age" name="Age" min="1" step="1" required>
 
-            <button type="submit">Predict</button>
-        </form>
+                <button type="submit">Predict</button>
+            </form>
 
-        <p class="note">
-            Educational prototype only. This prediction is not a medical diagnosis.
-        </p>
-    </div>
+            <p class="note">
+                Educational project only. This prediction is not a medical diagnosis.
+            </p>
+        </section>
 
-<script>
-    function togglePregnancies() {
-        const gender = document.getElementById("Gender").value;
-        const pregnancies = document.getElementById("Pregnancies");
+        <section class="comparison-section">
+            <h2>Machine Learning Model Comparison</h2>
+            <p class="comparison-intro">
+                The three models are evaluated on the same held-out test data.
+                Scores are percentages; recall and F1-score refer to Outcome = 1.
+            </p>
 
-        if (gender === "Male") {
-            pregnancies.value = "0";
-            pregnancies.disabled = true;
-        } else {
-            pregnancies.disabled = false;
+            {% if comparison_results %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1-score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in comparison_results %}
+                        <tr {% if item.name == best_model_name %}class="best-row"{% endif %}>
+                            <td>{{ item.name }}{% if item.name == best_model_name %} <span class="best-tag">Best F1</span>{% endif %}</td>
+                            <td>{{ "%.2f"|format(item.accuracy) }}%</td>
+                            <td>{{ "%.2f"|format(item.precision) }}%</td>
+                            <td>{{ "%.2f"|format(item.recall) }}%</td>
+                            <td>{{ "%.2f"|format(item.f1) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="best-model-box">
+                <h3>Best model by F1-score: {{ best_model_name }}</h3>
+                <p>
+                    The prediction form uses this model. Review recall as well as accuracy and F1-score
+                    before discussing which model performs best. These results are preliminary and depend
+                    on this dataset and test split.
+                </p>
+            </div>
+            {% else %}
+            <p class="empty-state">
+                Model comparison will appear here after the dataset loads successfully.
+            </p>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        function togglePregnancies() {
+            const gender = document.getElementById("Gender").value;
+            const pregnancies = document.getElementById("Pregnancies");
+
+            if (gender === "Male") {
+                pregnancies.value = "0";
+                pregnancies.disabled = true;
+            } else {
+                pregnancies.disabled = false;
+            }
         }
-    }
-</script>
 
+        // Ensure the disabled field is not required for male selections.
+        document.querySelector("form").addEventListener("submit", function () {
+            const gender = document.getElementById("Gender").value;
+            const pregnancies = document.getElementById("Pregnancies");
+            if (gender === "Male") {
+                pregnancies.disabled = false;
+                pregnancies.value = "0";
+            }
+        });
+    </script>
 </body>
 </html>
