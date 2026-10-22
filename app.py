@@ -7,12 +7,12 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE = os.path.join(BASE_DIR, "diabetes_models.pkl")
+MODEL_FILE = os.path.join(BASE_DIR, "diabetes_model.pkl")
 
 try:
     data = joblib.load(MODEL_FILE)
 
-    models = data["models"]
+    model = data["models"]
     best_model_name = data["best_model_name"]
     FEATURE_COLUMNS = data["feature_columns"]
 
@@ -24,7 +24,7 @@ try:
     startup_error = None
 
 except Exception as error:
-    models = {}
+    model = {}
     best_model_name = None
     FEATURE_COLUMNS = []
     comparison_results = []
@@ -49,7 +49,7 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if startup_error or not models:
+    if startup_error or not model:
         return render_template(
             "index.html",
             prediction=None,
@@ -81,7 +81,7 @@ def predict():
             [values], columns=FEATURE_COLUMNS
         )
 
-        selected_model = models[best_model_name]
+        selected_model = model[best_model_name]
         result = int(selected_model.predict(input_data)[0])
 
         if result == 1:
@@ -109,6 +109,11 @@ def predict():
         startup_error=error,
         selected_model=best_model_name
     )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 
 if __name__ == "__main__":
