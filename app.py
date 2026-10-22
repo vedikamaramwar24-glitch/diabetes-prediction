@@ -7,7 +7,7 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE = os.path.join(BASE_DIR, "diabetes_model.pkl")
+MODEL_FILE = os.path.join(BASE_DIR, "diabetes_models.pkl")
 
 try:
     data = joblib.load(MODEL_FILE)
