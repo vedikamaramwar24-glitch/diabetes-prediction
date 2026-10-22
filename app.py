@@ -99,8 +99,7 @@ def load_and_train_models():
         })
         trained_models[name] = model
 
-    # For this educational comparison, select the model with the highest
-    # F1-score for Outcome=1. Check recall as well when discussing results.
+   
     best_result = max(results, key=lambda row: row["f1"])
     best_model_name = best_result["name"]
 
